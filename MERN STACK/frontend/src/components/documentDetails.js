@@ -1,0 +1,1 @@
+const documentDetails = ({ document }) => {};
