@@ -3,6 +3,8 @@ const {
   createDocument,
   getDocument,
   getDocuments,
+  deleteDocument,
+  updateDocument
 } = require("../controllers/documentController");
 
 const router = express.Router();
@@ -17,13 +19,9 @@ router.get("/:id", getDocument);
 router.post("/", createDocument);
 
 // DELETE a document
-router.delete("/:id", (req, res) => {
-  res.json({ msg: "DELETE a new document" });
-});
+router.delete("/:id", deleteDocument);
 
 // PATCH/UPDATE a document
-router.patch("/:id", (req, res) => {
-  res.json({ msg: "UPDATE a new document" });
-});
+router.patch("/:id",updateDocument);
 
 module.exports = router;

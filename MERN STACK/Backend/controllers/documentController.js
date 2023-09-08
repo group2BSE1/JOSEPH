@@ -47,12 +47,38 @@ const deleteDocument = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No such document" });
   }
+
+  const document = await Document.findOneAndDelete({_id: id})
+
+  if (!document) {
+    return res.status(400).json({error: "No such document"})
+  }
+
+  res.status(200).json(document)
 };
 
 //update a document
+const updateDocument = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "No such document" });
+  }
+
+  const document = await Document.findOneAndUpdate({_id: id},{
+    ...req.body
+  })
+
+  if (!document) {
+    return res.status(400).json({error: "No such document"})
+  }
+
+  res.status(200).json(document)
+}
 
 module.exports = {
   getDocuments,
   getDocument,
   createDocument,
+  deleteDocument,
+  updateDocument 
 };
