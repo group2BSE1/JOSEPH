@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 //components
-import documentDetails from "../components/documentDetails";
+import DocumentDetails from "../components/DocumentDetails";
+import DocumentForm from "../components/DocumentForm";
 
 const Home = () => {
   const [documents, setDocuments] = useState(null);
@@ -24,9 +25,10 @@ const Home = () => {
       <div className="documents">
         {documents &&
           documents.map((document) => (
-            <documentDetails key={document._id} document={document} />
+            <DocumentDetails key={document._id} document={document} />
           ))}
       </div>
+      <DocumentForm />
     </div>
   );
 };
