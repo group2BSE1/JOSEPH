@@ -1,40 +1,46 @@
 import { useState } from "react";
+import { useDocumentsContext } from "../hooks/useDocumentsContext";
 
 const DocumentForm = () => {
+  const { dispatch } = useDocumentsContext();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [author, setAuthor] = useState("");
   const [size, setSize] = useState("");
   const [error, setError] = useState("");
+  const [emptyFields, setEmptyFields] = useState([]);
 
-  const handleSubmit = async (e) =>{
-    e.preventDefault()
-    
-    const document = {title,description,author,size}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const response = await fetch('/api/documents',{
+    const document = { title, description, author, size };
+
+    const response = await fetch("/api/documents", {
       method: "POST",
       body: JSON.stringify(document),
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    })
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    const json = await response.json()
+    const json = await response.json();
 
     if (!response.ok) {
-      setError(json.error)
+      setError(json.error);
+      setEmptyFields(json.emptyFields);
     }
 
     if (response.ok) {
-      setTitle('')
-      setAuthor('')
-      setDescription('')
-      setSize('')
-      setError(null)
-      console.log('new document added', json)
+      setTitle("");
+      setAuthor("");
+      setDescription("");
+      setSize("");
+      setError(null);
+      setEmptyFields([]);
+      console.log("new document added", json);
+      dispatch({ type: "CREATE_DOCUMENT", payload: json });
     }
-  }
+  };
 
   return (
     <form className="create" onSubmit={handleSubmit}>
@@ -45,6 +51,7 @@ const DocumentForm = () => {
         type="text"
         onChange={(e) => setTitle(e.target.value)}
         value={title}
+        className={emptyFields.includes("title") ? "error" : ""}
       />
 
       <label>Decsription: </label>
@@ -52,6 +59,7 @@ const DocumentForm = () => {
         type="text"
         onChange={(e) => setDescription(e.target.value)}
         value={description}
+        className={emptyFields.includes("description") ? "error" : ""}
       />
 
       <label>Author: </label>
@@ -59,6 +67,7 @@ const DocumentForm = () => {
         type="text"
         onChange={(e) => setAuthor(e.target.value)}
         value={author}
+        className={emptyFields.includes("author") ? "error" : ""}
       />
 
       <label>Size (KB): </label>
@@ -66,6 +75,7 @@ const DocumentForm = () => {
         type="number"
         onChange={(e) => setSize(e.target.value)}
         value={size}
+        className={emptyFields.includes("size") ? "error" : ""}
       />
 
       <button>Add Document</button>
@@ -74,4 +84,4 @@ const DocumentForm = () => {
   );
 };
 
-export default DocumentForm
+export default DocumentForm;

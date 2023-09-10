@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDocumentsContext } from "../hooks/useDocumentsContext";
 
 //components
 import DocumentDetails from "../components/DocumentDetails";
 import DocumentForm from "../components/DocumentForm";
 
 const Home = () => {
-  const [documents, setDocuments] = useState(null);
+  const { documents, dispatch } = useDocumentsContext();
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -13,12 +14,12 @@ const Home = () => {
       const json = await response.json();
 
       if (response.ok) {
-        setDocuments(json);
+        dispatch({ type: "SET_DOCUMENTS", payload: json });
       }
     };
 
     fetchDocuments();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="home">

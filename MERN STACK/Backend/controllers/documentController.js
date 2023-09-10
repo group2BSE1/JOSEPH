@@ -27,6 +27,24 @@ const getDocument = async (req, res) => {
 const createDocument = async (req, res) => {
   const { title, description, author, size } = req.body;
 
+  let emptyFields = [];
+
+  if (!title) {
+    emptyFields.push("title");
+  }
+  if (!description) {
+    emptyFields.push("description");
+  }
+  if (!author) {
+    emptyFields.push("size");
+  }
+
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ error: "Please fill in all fields", emptyFields });
+    console.log(emptyFields);
+  }
   // add doc to db
   try {
     const document = await Document.create({
@@ -48,13 +66,13 @@ const deleteDocument = async (req, res) => {
     return res.status(404).json({ error: "No such document" });
   }
 
-  const document = await Document.findOneAndDelete({_id: id})
+  const document = await Document.findOneAndDelete({ _id: id });
 
   if (!document) {
-    return res.status(400).json({error: "No such document"})
+    return res.status(400).json({ error: "No such document" });
   }
 
-  res.status(200).json(document)
+  res.status(200).json(document);
 };
 
 //update a document
@@ -64,21 +82,24 @@ const updateDocument = async (req, res) => {
     return res.status(404).json({ error: "No such document" });
   }
 
-  const document = await Document.findOneAndUpdate({_id: id},{
-    ...req.body
-  })
+  const document = await Document.findOneAndUpdate(
+    { _id: id },
+    {
+      ...req.body,
+    }
+  );
 
   if (!document) {
-    return res.status(400).json({error: "No such document"})
+    return res.status(400).json({ error: "No such document" });
   }
 
-  res.status(200).json(document)
-}
+  res.status(200).json(document);
+};
 
 module.exports = {
   getDocuments,
   getDocument,
   createDocument,
   deleteDocument,
-  updateDocument 
+  updateDocument,
 };
