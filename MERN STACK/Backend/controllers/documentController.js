@@ -36,14 +36,17 @@ const createDocument = async (req, res) => {
     emptyFields.push("description");
   }
   if (!author) {
+    emptyFields.push("author");
+  }
+  if (!size) {
     emptyFields.push("size");
   }
 
   if (emptyFields.length > 0) {
+    // console.log(emptyFields);
     return res
       .status(400)
       .json({ error: "Please fill in all fields", emptyFields });
-    console.log(emptyFields);
   }
   // add doc to db
   try {
