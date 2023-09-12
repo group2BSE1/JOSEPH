@@ -30,6 +30,7 @@ const getDocument = async (req, res) => {
 const createDocument = async (req, res) => {
   const { title, description, author, size } = req.body;
 
+  //check whether we have all fields are existing
   let emptyFields = [];
 
   if (!title) {
