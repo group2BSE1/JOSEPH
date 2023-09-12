@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 
 // get all documents
 const getDocuments = async (req, res) => {
-  const user_id = req.user_id;
+  const user_id = req.user._id;
+  // const user_id = "64ff0b8fd96a1b402987ea56";
 
   const documents = await Document.find({ user_id }).sort({ createdAt: -1 });
-
   res.status(200).json(documents);
 };
 
