@@ -4,10 +4,15 @@ const {
   getDocument,
   getDocuments,
   deleteDocument,
-  updateDocument
+  updateDocument,
 } = require("../controllers/documentController");
 
+const requireAuth = require("../middleware/requireAuth");
+
 const router = express.Router();
+
+// require auth for all document routes
+router.use(requireAuth);
 
 // GET all documents
 router.get("/", getDocuments);
@@ -22,6 +27,6 @@ router.post("/", createDocument);
 router.delete("/:id", deleteDocument);
 
 // PATCH/UPDATE a document
-router.patch("/:id",updateDocument);
+router.patch("/:id", updateDocument);
 
 module.exports = router;

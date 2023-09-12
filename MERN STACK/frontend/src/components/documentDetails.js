@@ -1,14 +1,22 @@
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 // date fns
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 const DocumentDetails = ({ document }) => {
   const { dispatch } = useDocumentsContext();
+  const { user } = useAuthContext();
 
   const handleClick = async () => {
+    if (!user) {
+      return;
+    }
     const response = await fetch("/api/documents/" + document._id, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
     });
     const json = await response.json();
 

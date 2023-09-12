@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 //components
 import DocumentDetails from "../components/DocumentDetails";
@@ -7,10 +8,15 @@ import DocumentForm from "../components/DocumentForm";
 
 const Home = () => {
   const { documents, dispatch } = useDocumentsContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      const response = await fetch("/api/documents");
+      const response = await fetch("/api/documents", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       const json = await response.json();
 
       if (response.ok) {
@@ -18,8 +24,10 @@ const Home = () => {
       }
     };
 
-    fetchDocuments();
-  }, [dispatch]);
+    if (user) {
+      fetchDocuments();
+    }
+  }, [dispatch, user]);
 
   return (
     <div className="home">

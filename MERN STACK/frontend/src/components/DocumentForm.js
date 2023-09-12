@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
-
+import { useAuthContext } from "../hooks/useAuthContext";
 const DocumentForm = () => {
   const { dispatch } = useDocumentsContext();
+  const { user } = useAuthContext();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [author, setAuthor] = useState("");
@@ -13,6 +15,10 @@ const DocumentForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
     const document = { title, description, author, size };
 
     const response = await fetch("/api/documents", {
@@ -20,6 +26,7 @@ const DocumentForm = () => {
       body: JSON.stringify(document),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
       },
     });
 
