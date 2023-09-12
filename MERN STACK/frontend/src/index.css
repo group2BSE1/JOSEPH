@@ -90,6 +90,14 @@ form button {
   border-radius: 4px;
   cursor: pointer;
 }
+
+form p {
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+form p:hover {
+  color: red;
+}
 div.error {
   padding: 10px;
   background: #ffefef;
@@ -122,6 +130,49 @@ nav button {
   cursor: pointer;
   font-size: 1em;
   margin-left: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+nav button:hover {
+  background: var(--primary);
+  color: white;
+  border: 2px solid var(--primary);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: "Poppins";
+  cursor: pointer;
+  font-size: 1em;
+  margin-left: 10px;
+}
+
+nav .my-link {
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: "Poppins";
+  cursor: pointer;
+  font-size: 1em;
+  margin-left: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+nav .my-link:hover {
+  background: var(--primary);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: "Poppins";
+  cursor: pointer;
+  font-size: 1em;
+  margin-left: 10px;
+}
+
+/* logo design */
+header .logo {
+  padding: 5px;
+}
+
+header .logo img {
+  width: 200px;
+  height: auto;
 }
 
 /* auth forms */

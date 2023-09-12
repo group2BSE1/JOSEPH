@@ -37,7 +37,7 @@ const Home = () => {
             <DocumentDetails key={document._id} document={document} />
           ))}
       </div>
-      <DocumentForm />
+      {/* <DocumentForm /> */}
     </div>
   );
 };
