@@ -44,7 +44,7 @@ const forgotPassword = async (req, res) => {
   try {
     // Generate a password reset token
     const token = crypto.randomBytes(32).toString("hex");
-    const user = awaitUser.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ error: error.message });
@@ -79,21 +79,32 @@ const forgotPassword = async (req, res) => {
     res.json({ message: "Password reset email sent" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(400).json({ error: "Server error" });
   }
+};
 
-  const document = await Document.findOneAndUpdate(
-    { _id: id },
-    {
-      ...req.body,
+// reset password
+const resetpassword = async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetToeknExpiration: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
-  );
 
-  if (!document) {
-    return res.status(400).json({ error: "No such document" });
+    //Update the user's password and clear the reset token
+    user.password = newPassword;
+    user.resetToken = null;
+    user;
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: "Server error" });
   }
-
-  res.status(200).json(document);
 };
 
 module.exports = { loginUser, signupUser, forgotPassword };

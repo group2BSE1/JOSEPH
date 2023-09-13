@@ -6,6 +6,7 @@ const {
   loginUser,
   signupUser,
   forgotPassword,
+  resetPassword,
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -18,5 +19,8 @@ router.post("/signup", signupUser);
 
 // forgotpassword route
 router.post("/forgotpassword", forgotPassword);
+
+//reset password route
+router.post("/resetpassword/:token", resetPassword);
 
 module.exports = router;
