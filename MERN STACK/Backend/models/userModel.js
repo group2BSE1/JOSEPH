@@ -72,25 +72,34 @@ userSchema.statics.login = async function (email, password) {
   return user;
 };
 
-//static forgotpassword method
-// userSchema.statics.login = async function (password) {
-//   if (!email || !password) {
-//     throw Error("All fields must be filled");
-//   }
+// static resetpassword method
+userSchema.statics.resetpassword = async function (token, newPassword) {
+  //validation
+  if (!validator.isStrongPassword(newPassword)) {
+    throw Error("Password is not strong enough");
+  }
 
-//   const user = await this.findOne({ email });
+  const user = await this.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  });
 
-//   if (!user) {
-//     throw Error("Incorrect Email");
-//   }
+  if (!user) {
+    throw Error("Invalid or Expired token");
+  }
 
-//   const match = await bcrypt.compare(password, user.password);
+  // Password Encryption
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(newPassword, salt);
 
-//   if (!match) {
-//     throw Error("Incorrect password");
-//   }
+  //Update the user's password and clear the reset token
+  user.password = hash;
+  user.resetToken = null;
+  user.resetTokenExpiration = null;
 
-//   return user;
-// };
+  await user.save();
+
+  return user;
+};
 
 module.exports = mongoose.model("User", userSchema);

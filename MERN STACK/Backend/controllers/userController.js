@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const { error } = require("console");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "3d" });
@@ -44,6 +45,7 @@ const forgotPassword = async (req, res) => {
   try {
     // Generate a password reset token
     const token = crypto.randomBytes(32).toString("hex");
+    // const token = "resetme1";
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -51,13 +53,16 @@ const forgotPassword = async (req, res) => {
     }
 
     user.resetToken = token;
-    user.resetToeknExpiration = Date.now() + 3600000;
+    user.resetTokenExpiration = Date.now() + 3600000;
 
     await user.save();
 
     //Send a password reset email with a link containing the token
     const transporter = nodemailer.createTransport({
       service: process.env.SERVICE,
+      host: process.env.HOST,
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -65,8 +70,8 @@ const forgotPassword = async (req, res) => {
     });
 
     const mailOptions = {
-      to: email,
       from: process.env.EMAIL_USER,
+      to: email,
       subject: "Password Reset",
       html: `
         <p>You requested a password reset.</p>
@@ -79,32 +84,22 @@ const forgotPassword = async (req, res) => {
     res.json({ message: "Password reset email sent" });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: "Server error" });
+    res.status(400).json({ error: error.message });
   }
 };
 
 // reset password
-const resetpassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { newPassword } = req.body;
   try {
-    const user = await User.findOne({
-      resetToken: token,
-      resetToeknExpiration: { $gt: Date.now() },
-    });
+    const user = await User.resetpassword(token, newPassword);
 
-    if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
-    }
-
-    //Update the user's password and clear the reset token
-    user.password = newPassword;
-    user.resetToken = null;
-    user;
+    res.status(200).json({ token, newPassword });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: "Server error" });
+    res.status(400).json({ error: error.message });
   }
 };
 
-module.exports = { loginUser, signupUser, forgotPassword };
+module.exports = { loginUser, signupUser, forgotPassword, resetPassword };
